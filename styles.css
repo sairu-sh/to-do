@@ -216,7 +216,8 @@ body {
 
 .completed,
 .remaining,
-.task {
+.task,
+.matches {
   display: none;
 }
 

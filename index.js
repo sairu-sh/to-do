@@ -3,6 +3,7 @@ const taskDscrip = document.getElementById("task__dscrip--input");
 const taskAdder = document.getElementById("task--adder");
 
 const searchBar = document.getElementById("identifier");
+const searchContainer = document.getElementById("matched--tasks");
 
 const bodyEmpty = document.getElementById("empty__body");
 
@@ -40,16 +41,12 @@ const emptyTheNav = () => {
 //functions
 
 //check for emptiness
-const checkEmptiness = (e) => {
-  remainingContainer.querySelector("#empty__body").classList.remove("active");
-  if (e.target) {
-    parentContainer = e.target.closest(".container");
-    emptyImage = parentContainer.querySelector("#empty__body");
+const checkEmptiness = () => {
+  const parentDiv = document.querySelector(`.${activeComponent}`);
+  const emptyImage = parentDiv.querySelector(".empty");
+  if (parentDiv.querySelector(".task--item"))
     emptyImage.classList.remove("active");
-    if (parentContainer) {
-      if (!parentContainer.hasChildren()) emptyImage.classList.add("active");
-    }
-  }
+  else emptyImage.classList.add("active");
 };
 
 //set html content
@@ -59,6 +56,33 @@ const setHTML = (id, title, description, state = false) => {
   <p class="dscrip">${description}</p>
   <input type="checkbox" class="checkbox" ${state ? `checked="${state}"` : ``}/>
 </div>`;
+};
+
+//render the matching tasks when searching
+const renderSearch = (arr) => {
+  document.querySelector(`.${activeComponent}`).classList.remove("active");
+  searchContainer.classList.remove("active");
+  console.log(searchContainer.childNodes.length);
+  searchContainer.innerHTML = "";
+  searchContainer.insertAdjacentHTML(
+    "afterbegin",
+    `<div class="empty active" id="empty__body">
+    <img src="images/bullets.svg" alt="bullets" class="bullets" />
+    <p>You have no tasks</p>
+  </div>`
+  );
+
+  if (arr) searchContainer.querySelector(".empty").classList.remove("active");
+  else searchContainer.querySelector(".empty").classList.add("active");
+
+  arr.forEach((arr) => {
+    const state = completed.some((subArr) =>
+      arr.every((value, index) => value === subArr[index])
+    );
+    const HTML = setHTML(...arr, state);
+    searchContainer.insertAdjacentHTML("afterbegin", HTML);
+  });
+  searchContainer.classList.add("active");
 };
 
 //add task to the completed div and remove from the remaining div
@@ -79,7 +103,6 @@ const addToCompletedDiv = (id, title, description, e) => {
     if (remainingContainer.firstChild)
       remainingContainer.removeChild(remainingContainer.firstChild);
   }
-  checkEmptiness(e);
 };
 
 //add to the remaining div and remove from completed div
@@ -100,18 +123,17 @@ const addToRemainingDiv = (id, title, description, e) => {
     if (completedContainer.firstChild)
       completedContainer.removeChild(completedContainer.firstChild);
   }
-  checkEmptiness(e);
 };
 
 //remove task from completed
-const popFromCompleted = (id, title, description, e) => {
+const popFromCompleted = (id, title, description) => {
   id = Number(id);
   const index = completed.findIndex(
     (item) => item[0] === id && item[1] === title && item[2] === description
   );
   completed.splice(index, 1);
   remaining.push([id, title, description]);
-  addToRemainingDiv(id, title, description, e);
+  addToRemainingDiv(id, title, description);
 };
 
 const pushToCompleted = (id, title, description, e) => {
@@ -121,20 +143,22 @@ const pushToCompleted = (id, title, description, e) => {
   );
   remaining.splice(index, 1);
   completed.push([id, title, description]);
-  addToCompletedDiv(id, title, description, e);
+  addToCompletedDiv(id, title, description);
 };
 
 //completing a task
 function checkboxChanged(e) {
-  console.log("hello");
   const parentElement = e.target.closest(".task--item");
   const dataId = parentElement.dataset.id;
   const title = parentElement.querySelector(".name").textContent;
   const description = parentElement.querySelector(".dscrip")?.textContent || "";
   if (e.target.checked) {
-    pushToCompleted(dataId, title, description, e);
+    pushToCompleted(dataId, title, description);
+    taskContainer.querySelector(
+      `[data-id="${dataId}"] .checkbox`
+    ).checked = true;
   } else {
-    popFromCompleted(dataId, title, description, e);
+    popFromCompleted(dataId, title, description);
     taskContainer.querySelector(
       `[data-id="${dataId}"] .checkbox`
     ).checked = false;
@@ -155,7 +179,8 @@ const addTaskToList = (event) => {
         <input type="checkbox" class="checkbox" />
     </div>`;
   taskContainer.insertAdjacentHTML("afterbegin", HTMLContent);
-  const checkbox = document
+
+  document
     .querySelector(".checkbox")
     .addEventListener("change", checkboxChanged);
 
@@ -166,6 +191,7 @@ const addTaskToList = (event) => {
   remaining.push([i, title, dscrip || ""]);
   addToRemainingDiv(i, title, dscrip || "", 1);
   all.push([i, title, dscrip || ""]);
+  checkEmptiness();
   i++;
 };
 
@@ -178,6 +204,7 @@ navCompleted.addEventListener("click", (e) => {
   completedContainer.classList.add("active");
   navCompleted.classList.add("active");
   activeComponent = "completed";
+  checkEmptiness();
 });
 navRemaining.addEventListener("click", (e) => {
   emptyTheBody();
@@ -185,13 +212,15 @@ navRemaining.addEventListener("click", (e) => {
   remainingContainer.classList.add("active");
   navRemaining.classList.add("active");
   activeComponent = "remaining";
+  checkEmptiness();
 });
 navHome.addEventListener("click", (e) => {
   emptyTheBody();
   emptyTheNav();
   taskContainer.classList.add("active");
   navHome.classList.add("active");
-  activeComponent;
+  activeComponent = "task";
+  checkEmptiness();
 });
 
 //adding a task
@@ -208,13 +237,16 @@ taskTitle.addEventListener("keydown", (e) => {
 //seraching
 searchBar.addEventListener("input", (e) => {
   let checker = e.target.value.toLowerCase();
+  console.log(checker);
+  if (checker === "") {
+    searchContainer.classList.remove("active");
+    document.querySelector(`.${activeComponent}`).classList.add("active");
+  }
+
   if (activeComponent === "task") {
     const tasks = all.filter((arr) => {
-      arr[1].includes(checker);
-      console.log(arr[1]);
-      console.log(checker);
-      console.log(arr[1] === checker);
+      return arr[1].toLowerCase().startsWith(checker);
     });
-    console.log(tasks);
+    renderSearch(tasks);
   }
 });
