@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>to-do</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+      integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SY2XofP+MIc50FvHiK4K3j5Df83gxmjO7aCZY"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href=" styles.css" />
+    <script defer src="index.js"></script>
+  </head>
+  <body>
+    <div class="head">
+      <div class="header container">
+        <div class="logo__container">
+          <p class="logo">TaskTrek</p>
+          <img src="images/check.svg" alt="check" />
+        </div>
+        <nav class="header__nav">
+          <ul>
+            <li class="nav--item active" id="home">Home</li>
+            <li class="nav--item" id="completed">Completed</li>
+            <li class="nav--item" id="remaining">Remaining</li>
+          </ul>
+        </nav>
+        <img
+          src="images/plus.svg"
+          alt="add"
+          class="add--icon"
+          id="expanded--inputbox"
+        />
+      </div>
+    </div>
+    <div class="searches">
+      <div class="search container">
+        <div class="searchbox">
+          <input type="text" id="identifier" />
+          <button class="search__icon">
+            <img src="images/search.svg" alt="search" />
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="adder">
+      <div class="add__task container">
+        <input type="text" id="task__name--input" />
+        <img
+          src="images/plus.svg"
+          alt="plus"
+          class="add--icon disabled"
+          id="task--adder"
+        />
+        <img
+          src="images/expand.svg"
+          alt="expand"
+          id="expanded--inputbox"
+          style="width: 40px"
+        />
+      </div>
+    </div>
+    <div class="main">
+      <div class="task container active" id="all--tasks">
+        <div class="empty active" id="empty__body">
+          <img src="images/bullets.svg" alt="bullets" class="bullets" />
+          <p>You have no tasks</p>
+        </div>
+      </div>
+      <div class="completed container" id="completed--tasks">
+        <div class="empty active" id="empty__body">
+          <img src="images/bullets.svg" alt="bullets" class="bullets" />
+          <p>You have no tasks</p>
+        </div>
+      </div>
+      <div class="remaining container" id="remaining--tasks">
+        <div class="empty active" id="empty__body">
+          <img src="images/bullets.svg" alt="bullets" class="bullets" />
+          <p>You have no tasks</p>
+        </div>
+      </div>
+    </div>
+    <div class="popups">
+      <div class="popup container">
+        <p class="popup__title">Create a new Task</p>
+        <input type="text" id="task__name--input" />
+        <input type="text" id="task__dscrip--input">
+        <div class="buttons">
+          <button class="cancelation">CANCEL</button>
+          <button class="add">ADD</button>
+        </div>
+      </div>
+      </div>
+    </div>
+  </body>
+</html>
