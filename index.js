@@ -248,5 +248,15 @@ searchBar.addEventListener("input", (e) => {
       return arr[1].toLowerCase().startsWith(checker);
     });
     renderSearch(tasks);
+  } else if (activeComponent === "completed") {
+    const tasks = completed.filter((arr) => {
+      return arr[1].toLowerCase().startsWith(checker);
+    });
+    renderSearch(tasks);
+  } else {
+    const tasks = remaining.filter((arr) => {
+      return arr[1].toLowerCase().startsWith(checker);
+    });
+    renderSearch(tasks);
   }
 });
